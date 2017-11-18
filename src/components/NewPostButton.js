@@ -1,15 +1,16 @@
-import React, { Component } from "react";
+import React from "react";
 
-class NewPostButton extends Component {
-    render() {
-        return (
-            <div className="action-button">
-                <a className="btn-floating red">
-                    <i className="fa fa-plus" />
-                </a>
-            </div>
-        );
-    }
-}
+const NewPostButton = props => {
+    return (
+        <div
+            className="action-button"
+            onClick={() => props.onToggleModalForm()}
+        >
+            <a className="btn-floating red">
+                <i className="fa fa-plus" />
+            </a>
+        </div>
+    );
+};
 
 export default NewPostButton;

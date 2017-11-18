@@ -8,7 +8,12 @@ class App extends Component {
         return (
             <div>
                 <Router>
-                    <Route exact={true} path="/" component={Posts} />
+                    <div>
+                        <Route exact={true} path="/" component={Posts} />
+                        <Route path="/react" component={Posts} />
+                        <Route path="/redux" component={Posts} />
+                        <Route path="/udacity" component={Posts} />
+                    </div>
                 </Router>
             </div>
         );

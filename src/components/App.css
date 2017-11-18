@@ -47,6 +47,7 @@ nav {
     height: 60px;
     line-height: 60px;
     color: white;
+    text-transform: capitalize;
 }
 
 .search-content {
@@ -78,6 +79,10 @@ nav {
     font-family: "Roboto", sans-serif;
     font-weight: lighter;
     user-select: none;
+}
+
+select {
+    height: 43px;
 }
 
 .category-list {
@@ -177,7 +182,6 @@ a {
 
 /* The Modal (background) */
 .modal {
-    display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
     z-index: 1; /* Sit on top */
     padding-top: 100px; /* Location of the box */

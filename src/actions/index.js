@@ -1,21 +1,30 @@
-import * as ReadableAPI from "../utils/ReadableAPI";
+import { getAllPosts } from "../utils/ReadableAPI";
 
-export const SELECT_CATEGORY = "SELECT_CATEGORY";
 export const REQUEST_ALL_POSTS = "REQUEST_ALL_POSTS";
 export const RECEIVE_ALL_POSTS = "RECEIVE_POSTS";
+export const ADD_POST = "ADD_POST";
+
+export const FILTER_POSTS_BY_TITLE = "FILTER_POSTS_BY_TITLE";
 
 // region synchronous-actions
 
-export function selectCategory(category) {
+export function filterPostsBytitle(filter) {
     return {
-        type: SELECT_CATEGORY,
-        category
+        type: FILTER_POSTS_BY_TITLE,
+        filter
     };
 }
 
 function requestAllPosts() {
     return {
         type: REQUEST_ALL_POSTS
+    };
+}
+
+export function addPost(post) {
+    return {
+        type: ADD_POST,
+        post
     };
 }
 
@@ -26,10 +35,10 @@ function requestAllPosts() {
     };
 }*/
 
-function receivePosts(json) {
+function receivePosts(posts) {
     return {
         type: RECEIVE_ALL_POSTS,
-        posts: json.data.children.map(child => child.data),
+        posts: posts,
         receivedAt: Date.now()
     };
 }
@@ -41,24 +50,15 @@ function receivePosts(json) {
 export function fetchAllPosts() {
     return dispatch => {
         dispatch(requestAllPosts());
-        ReadableAPI.getAllPosts(response => {
-            const posts = response.reduce((posts, post) => {
-                if (posts[post.category]) {
-                    return {
-                        ...posts,
-                        [post.category]: [post].concat(posts[post.category])
-                    };
-                } else {
-                    return {
-                        ...posts,
-                        [post.category]: post
-                    };
-                }
-            }, {});
+        getAllPosts().then(posts => {
             dispatch(receivePosts(posts));
         });
     };
 }
+
+// endregion asynchronous-actions
+
+// helpers
 
 function shouldFetchPosts(state, category) {
     const posts = state.selectedCategory[category];
@@ -80,5 +80,3 @@ export function fetchPostsIfNeeded(category) {
         }
     };
 }
-
-// endregion asynchronous-actions

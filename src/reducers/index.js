@@ -1,13 +1,15 @@
 import { combineReducers } from "redux";
 import {
-    SELECT_CATEGORY,
     REQUEST_ALL_POSTS,
-    RECEIVE_ALL_POSTS
+    RECEIVE_ALL_POSTS,
+    FILTER_POSTS_BY_TITLE,
+    ADD_POST
 } from "../actions";
 
 /*const stateShape = {
     selectedCategory: "react",
     isFetching: false,
+    filter: "",
     posts: {
         react: {
             isFetching: false,
@@ -77,20 +79,23 @@ import {
     }
 };*/
 
-function selectedCategory(state = "react", action) {
+function filteredPosts(state = "", action) {
     switch (action.type) {
-        case SELECT_CATEGORY:
-            return action.selectedCategory;
+        case FILTER_POSTS_BY_TITLE:
+            return action.filter;
         default:
             return state;
     }
 }
 
-function posts(
-    state = { selectedCategory: "react", isFetching: false, posts: [] },
+function app(
+    state = {
+        isFetching: false,
+        posts: []
+    },
     action
 ) {
-    switch (state.type) {
+    switch (action.type) {
         case REQUEST_ALL_POSTS:
             return {
                 ...state,
@@ -102,14 +107,36 @@ function posts(
                 isFetching: false,
                 posts: action.posts
             };
+        case ADD_POST:
+            let newState;
+            if (state.posts[action.post.category] !== undefined) {
+                if (state.posts[action.post.category].constructor === Array) {
+                    newState = state.posts[action.post.category].concat(
+                        action.post
+                    );
+                } else {
+                    newState = [state.posts[action.post.category]].concat(
+                        action.post
+                    );
+                }
+            } else {
+                newState = action.post;
+            }
+            return {
+                ...state,
+                posts: {
+                    ...state.posts,
+                    [action.post.category]: newState
+                }
+            };
         default:
             return state;
     }
 }
 
 const rootReducer = combineReducers({
-    selectedCategory,
-    posts
+    filteredPosts,
+    app
 });
 
 export default rootReducer;
