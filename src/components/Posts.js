@@ -76,9 +76,10 @@ class Posts extends Component {
                 const dateB = new Date(b.timestamp);
                 if (dateFilter === "LATEST") {
                     return dateB - dateA;
-                }
-                if (dateFilter === "OLDEST") {
+                } else if (dateFilter === "OLDEST") {
                     return dateA - dateB;
+                } else {
+                    return dateB - dateA;
                 }
             });
         } else {
@@ -88,9 +89,10 @@ class Posts extends Component {
         if (voteScoreFilter) {
             showingPosts = showingPosts.sort((a, b) => {
                 if (voteScoreFilter === "HIGH") {
+                    return 1;
+                } else if (voteScoreFilter === "LOWER") {
                     return -1;
-                }
-                if (voteScoreFilter === "LOWER") {
+                } else {
                     return 1;
                 }
             });
@@ -103,9 +105,6 @@ class Posts extends Component {
             showingPosts = showingPosts.filter(post =>
                 matchList.test(post.title)
             );
-        } else {
-            // show all
-            showingPosts = showingPosts;
         }
 
         return (
