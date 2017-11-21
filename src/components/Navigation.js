@@ -2,10 +2,11 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+import { filterPostsByScore, filterPostsByDate } from "../actions";
 
 class Navigation extends Component {
     render() {
-        const { selectedCategory } = this.props;
+        const { selectedCategory, score, dateFilter, dispatch } = this.props;
 
         return (
             <aside className="menu">
@@ -61,23 +62,45 @@ class Navigation extends Component {
                                 </Link>
                             </dd>
                             <dt className="category-title">Filter</dt>
-                            <dd class="menu-item">
-                                <a href="#" class="active">
-                                    <i class="fa fa-sort-up" /> Major
+                            <dd className="menu-item">
+                                <a
+                                    className={score === "HIGH" ? "active" : ""}
+                                    onClick={() =>
+                                        dispatch(filterPostsByScore("HIGH"))}
+                                >
+                                    <i className="fa fa-sort-up" /> Major
                                 </a>{" "}
                                 /
-                                <a href="#">
-                                    <i class="fa fa-sort-desc" /> Minor
+                                <a
+                                    className={
+                                        score === "LOWER" ? "active" : ""
+                                    }
+                                    onClick={() =>
+                                        dispatch(filterPostsByScore("LOWER"))}
+                                >
+                                    <i className="fa fa-sort-desc" /> Minor
                                 </a>{" "}
                                 Vote
                             </dd>
-                            <dd class="menu-item">
-                                <a href="#" class="active">
-                                    <i class="fa fa-sort-up" /> Latest
+                            <dd className="menu-item">
+                                <a
+                                    className={
+                                        dateFilter === "LATEST" ? "active" : ""
+                                    }
+                                    onClick={() =>
+                                        dispatch(filterPostsByDate("LATEST"))}
+                                >
+                                    <i className="fa fa-sort-up" /> Latest
                                 </a>{" "}
                                 /
-                                <a href="#">
-                                    <i class="fa fa-sort-desc" /> Oldest
+                                <a
+                                    className={
+                                        dateFilter === "OLDEST" ? "active" : ""
+                                    }
+                                    onClick={() =>
+                                        dispatch(filterPostsByDate("OLDEST"))}
+                                >
+                                    <i className="fa fa-sort-desc" /> Oldest
                                 </a>
                             </dd>
                         </dl>
@@ -95,8 +118,11 @@ Navigation.PropTypes = {
 
 function mapStateToProps(state, ownProps) {
     const { selectedCategory } = ownProps;
+    const { filteredPosts: { score, dateFilter } } = state;
     return {
-        selectedCategory
+        selectedCategory,
+        score,
+        dateFilter
     };
 }
 

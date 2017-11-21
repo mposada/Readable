@@ -58,16 +58,54 @@ class Posts extends Component {
         /**
          * match: return the current url route
          */
-        const { posts, isFetching, filter, selectedCategory } = this.props;
+        const {
+            posts,
+            isFetching,
+            titleFilter,
+            voteScoreFilter,
+            dateFilter,
+            selectedCategory
+        } = this.props;
 
         // check what posts should we show
         let showingPosts;
-        if (filter) {
-            const matchList = new RegExp(escapeRegExp(filter), "i");
-            showingPosts = posts.filter(post => matchList.test(post.title));
+
+        if (dateFilter) {
+            showingPosts = posts.sort((a, b) => {
+                const dateA = new Date(a.timestamp);
+                const dateB = new Date(b.timestamp);
+                if (dateFilter === "LATEST") {
+                    return dateB - dateA;
+                }
+                if (dateFilter === "OLDEST") {
+                    return dateA - dateB;
+                }
+            });
+        } else {
+            showingPosts = posts;
+        }
+
+        if (voteScoreFilter) {
+            showingPosts = showingPosts.sort((a, b) => {
+                if (voteScoreFilter === "HIGH") {
+                    return -1;
+                }
+                if (voteScoreFilter === "LOWER") {
+                    return 1;
+                }
+            });
+        } else {
+            showingPosts = posts;
+        }
+
+        if (titleFilter) {
+            const matchList = new RegExp(escapeRegExp(titleFilter), "i");
+            showingPosts = showingPosts.filter(post =>
+                matchList.test(post.title)
+            );
         } else {
             // show all
-            showingPosts = posts;
+            showingPosts = showingPosts;
         }
 
         return (
@@ -111,7 +149,13 @@ Posts.PropTypes = {
 
 function mapStateToProps(state, ownProps) {
     const { posts: postsByCategory, isFetching } = state.app;
-    const { filteredPosts: filter } = state;
+    const {
+        filteredPosts: {
+            filter: titleFilter,
+            score: voteScoreFilter,
+            dateFilter
+        }
+    } = state;
     const { match } = ownProps;
 
     let selectedCategory = match.path.slice(1);
@@ -137,7 +181,14 @@ function mapStateToProps(state, ownProps) {
         posts = [];
     }
 
-    return { isFetching, posts, filter, selectedCategory };
+    return {
+        isFetching,
+        posts,
+        titleFilter,
+        voteScoreFilter,
+        dateFilter,
+        selectedCategory
+    };
 }
 
 export default connect(mapStateToProps)(Posts);

@@ -5,12 +5,28 @@ export const RECEIVE_ALL_POSTS = "RECEIVE_POSTS";
 export const ADD_POST = "ADD_POST";
 
 export const FILTER_POSTS_BY_TITLE = "FILTER_POSTS_BY_TITLE";
+export const FILTER_POSTS_SCORE = "FILTER_POSTS_SCORE";
+export const FILTER_POSTS_DATE = "FILTER_POSTS_DATE";
 
 // region synchronous-actions
 
 export function filterPostsBytitle(filter) {
     return {
         type: FILTER_POSTS_BY_TITLE,
+        filter
+    };
+}
+
+export function filterPostsByScore(filter) {
+    return {
+        type: FILTER_POSTS_SCORE,
+        filter
+    };
+}
+
+export function filterPostsByDate(filter) {
+    return {
+        type: FILTER_POSTS_DATE,
         filter
     };
 }

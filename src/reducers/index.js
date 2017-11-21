@@ -3,6 +3,8 @@ import {
     REQUEST_ALL_POSTS,
     RECEIVE_ALL_POSTS,
     FILTER_POSTS_BY_TITLE,
+    FILTER_POSTS_SCORE,
+    FILTER_POSTS_DATE,
     ADD_POST
 } from "../actions";
 
@@ -79,10 +81,30 @@ import {
     }
 };*/
 
-function filteredPosts(state = "", action) {
+function filteredPosts(
+    state = {
+        filter: "",
+        score: "",
+        dateFilter: "LATEST"
+    },
+    action
+) {
     switch (action.type) {
         case FILTER_POSTS_BY_TITLE:
-            return action.filter;
+            return {
+                ...state,
+                filter: action.filter
+            };
+        case FILTER_POSTS_SCORE:
+            return {
+                ...state,
+                score: action.filter
+            };
+        case FILTER_POSTS_DATE:
+            return {
+                ...state,
+                dateFilter: action.filter
+            };
         default:
             return state;
     }
