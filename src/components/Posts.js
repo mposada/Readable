@@ -1,3 +1,7 @@
+/**
+ * Main page of the application, list all the posts of all categories
+ */
+
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
@@ -5,7 +9,7 @@ import { fetchAllPosts, filterPostsBytitle, addPost } from "../actions";
 import escapeRegExp from "escape-string-regexp";
 import uuidv4 from "uuid/v4";
 import Header from "./Header";
-import ItemPost from "./ItemPost";
+import ListItemPost from "./ListItemPost";
 import PostForm from "./PostForm";
 import NewPostButton from "./NewPostButton";
 import Navigation from "./Navigation";
@@ -68,7 +72,7 @@ class Posts extends Component {
         } = this.props;
 
         // check what posts should we show
-        let showingPosts;
+        let showingPosts = posts;
 
         if (dateFilter) {
             showingPosts = posts.sort((a, b) => {
@@ -82,22 +86,18 @@ class Posts extends Component {
                     return dateB - dateA;
                 }
             });
-        } else {
-            showingPosts = posts;
         }
 
         if (voteScoreFilter) {
             showingPosts = showingPosts.sort((a, b) => {
                 if (voteScoreFilter === "HIGH") {
-                    return 1;
+                    return b.voteScore - a.voteScore;
                 } else if (voteScoreFilter === "LOWER") {
-                    return -1;
+                    return a.voteScore - b.voteScore;
                 } else {
-                    return 1;
+                    return -1;
                 }
             });
-        } else {
-            showingPosts = posts;
         }
 
         if (titleFilter) {
@@ -119,7 +119,7 @@ class Posts extends Component {
                     <section className="posts-container">
                         {(isFetching && <Loading />) ||
                             showingPosts.map(post => (
-                                <ItemPost key={post.id} post={post} />
+                                <ListItemPost key={post.id} post={post} />
                             ))}
                     </section>
                 </section>
@@ -127,7 +127,7 @@ class Posts extends Component {
                 {this.state.modalFormActive && (
                     <PostForm
                         onToggleModalForm={this.toggleModalForm.bind(this)}
-                        onCreatePost={this.createPost.bind(this)}
+                        onSubmitPost={this.createPost.bind(this)}
                     />
                 )}
 

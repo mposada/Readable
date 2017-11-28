@@ -2,10 +2,14 @@ import { combineReducers } from "redux";
 import {
     REQUEST_ALL_POSTS,
     RECEIVE_ALL_POSTS,
+    RECEIVE_COMMENTS,
     FILTER_POSTS_BY_TITLE,
     FILTER_POSTS_SCORE,
     FILTER_POSTS_DATE,
-    ADD_POST
+    ADD_POST,
+    UPDATE_POST,
+    DELETE_POST,
+    VOTE_POST
 } from "../actions";
 
 /*const stateShape = {
@@ -129,20 +133,43 @@ function app(
                 isFetching: false,
                 posts: action.posts
             };
-        case ADD_POST:
-            let newState;
-            if (state.posts[action.post.category] !== undefined) {
-                if (state.posts[action.post.category].constructor === Array) {
-                    newState = state.posts[action.post.category].concat(
-                        action.post
-                    );
-                } else {
-                    newState = [state.posts[action.post.category]].concat(
-                        action.post
-                    );
+        case RECEIVE_COMMENTS:
+            return {
+                ...state,
+                comments: {
+                    ...state.comments,
+                    ...action.comments
                 }
+            };
+        case ADD_POST:
+            return {
+                ...state,
+                posts: {
+                    ...state.posts,
+                    [action.post.category]: postNewState(state, action)
+                }
+            };
+        case UPDATE_POST:
+            return {
+                ...state,
+                posts: {
+                    ...state.posts,
+                    [action.post.category]: postNewState(state, action)
+                }
+            };
+        case DELETE_POST:
+            let newState;
+            if (state.posts[action.post.category].constructor === Array) {
+                const postIndex = state.posts[action.post.category].findIndex(
+                    item => item.id === action.post.id
+                );
+
+                newState = state.posts[action.post.category].splice(
+                    postIndex,
+                    1
+                );
             } else {
-                newState = action.post;
+                newState = state.posts[action.post.category] = {};
             }
             return {
                 ...state,
@@ -151,8 +178,39 @@ function app(
                     [action.post.category]: newState
                 }
             };
+        case VOTE_POST:
+            return {
+                ...state,
+                posts: {
+                    ...state.posts,
+                    [action.post.category]: postNewState(state, action)
+                }
+            };
         default:
             return state;
+    }
+}
+
+function postNewState(state, action) {
+    if (state.posts[action.post.category] !== undefined) {
+        if (state.posts[action.post.category].constructor === Array) {
+            const postIndex = state.posts[action.post.category].findIndex(
+                item => item.id === action.post.id
+            );
+
+            if (postIndex >= 0) {
+                state.posts[action.post.category].splice(postIndex, 1);
+            }
+
+            return state.posts[action.post.category].concat(action.post);
+        } else {
+            if (state.posts[action.post.category].id === action.post.id) {
+                return action.post;
+            }
+            return [state.posts[action.post.category]].concat(action.post);
+        }
+    } else {
+        return action.post;
     }
 }
 

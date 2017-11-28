@@ -1,8 +1,12 @@
+/**
+ * post list item, of the main page list
+ */
+
 import React from "react";
 import moment from "moment";
 import { Link } from "react-router-dom";
 
-const ItemPost = props => {
+const ListItemPost = props => {
     const day = moment(props.post.timestamp).fromNow();
     let icon;
     if (props.post.voteScore >= 0) {
@@ -32,4 +36,4 @@ const ItemPost = props => {
     );
 };
 
-export default ItemPost;
+export default ListItemPost;

@@ -31,6 +31,43 @@ export function getAllPosts() {
         });
 }
 
+export function getPost(id) {
+    return fetch(`${api}/posts/${id}`, { headers })
+        .then(response => response.json(), error => console.log("Error"))
+        .then(post => {
+            return {
+                [post.category]: post
+            };
+        });
+}
+
+export function getComments(postID) {
+    console.log(`${api}/posts/${postID}/comments`);
+    return fetch(`${api}/posts/${postID}/comments`, { headers })
+        .then(response => response.json(), error => console.log("Error"))
+        .then(jsonResponse => {
+            console.log("jsonResponse", jsonResponse);
+            const comments = jsonResponse.reduce((comments, comment) => {
+                console.log(comments[comment.parentId]);
+                if (comments[comment.parentId]) {
+                    return {
+                        ...comments,
+                        [comment.parentId]: [comment].concat(
+                            comments[comment.parentId]
+                        )
+                    };
+                } else {
+                    return {
+                        ...comments,
+                        [comment.parentId]: comment
+                    };
+                }
+            }, {});
+            console.log("comments", comments);
+            return comments;
+        });
+}
+
 export function createPost(body) {
     return fetch(`${api}/posts/`, {
         method: "POST",
@@ -39,4 +76,34 @@ export function createPost(body) {
     })
         .then(response => response.json())
         .catch(error => console.log("An error occured.", error));
+}
+
+export function updatePost(id, body) {
+    return fetch(`${api}/posts/${id}`, {
+        method: "PUT",
+        headers,
+        body: JSON.stringify(body)
+    })
+        .then(response => response.json())
+        .catch(error => console.log("Error updating the post", error));
+}
+
+export function deletePost(id) {
+    return fetch(`${api}/posts/${id}`, {
+        method: "DELETE",
+        headers
+    })
+        .then(response => response.json())
+        .catch(error => console.log("Error updating the post", error));
+}
+
+export function votePost(vote, post) {
+    const body = { option: vote };
+    return fetch(`${api}/posts/${post.id}`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(body)
+    })
+        .then(response => response.json())
+        .catch(error => console.log("Error voting the post", error));
 }

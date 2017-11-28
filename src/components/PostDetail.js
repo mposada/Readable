@@ -1,38 +1,44 @@
+/**
+ * Post Detail page, show all the information relevant to a single post
+ */
+
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import { fetchPost } from "../actions";
 import Navigation from "./Navigation";
 import Header from "./Header";
+import Post from "./Post";
+
+import Loading from "./Loading";
 
 class PostDetail extends Component {
     componentDidMount() {
-        const { dispatch } = this.props;
+        const { dispatch, id, post } = this.props;
+        if (Object.keys(post).length === 0) {
+            dispatch(fetchPost(id));
+        }
     }
 
     render() {
-        console.log(this.props);
-        const { post } = this.props;
+        const { post, isFetching } = this.props;
         return (
             <section className="app">
                 <Navigation selectedCategory={post.category} />
                 <section className="content">
                     <Header selectedCategory="Post Detail" />
                     <section className="posts-container">
-                        <article className="post">
-                            <div className="card-post-header">
-                                <span>
-                                    by <b>{post.author}</b>
-                                </span>
-                                <div>Aug 28</div>
-                            </div>
-                            <h4>{post.title}</h4>
-                            <p>{post.body}</p>
-                        </article>
+                        {(isFetching && <Loading />) || <Post post={post} />}
                     </section>
                 </section>
             </section>
         );
     }
 }
+
+PostDetail.PropTypes = {
+    post: PropTypes.array.isRequired
+};
 
 function mapStateToProps(state, ownProps) {
     const { posts: postsByCategory, isFetching } = state.app;
@@ -48,14 +54,12 @@ function mapStateToProps(state, ownProps) {
         } else {
             post = postsByCategory[category];
         }
-    } else {
-        // posts is undefined let's fetch the post we need
     }
 
     return {
         id,
-        category,
-        post
+        post,
+        isFetching
     };
 }
 

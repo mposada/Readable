@@ -6,8 +6,8 @@ const PostForm = props => {
         event.preventDefault();
 
         const values = serializeForm(event.target, { hash: true });
-        if (props.onCreatePost) {
-            props.onCreatePost(values);
+        if (props.onSubmitPost) {
+            props.onSubmitPost(values);
         }
     };
 
@@ -28,6 +28,7 @@ const PostForm = props => {
                             id="category"
                             name="category"
                             className="form-control"
+                            defaultValue={props.post ? props.post.category : ""}
                             required
                         >
                             <option value="">Select</option>
@@ -43,7 +44,7 @@ const PostForm = props => {
                             id="author"
                             name="author"
                             className="form-control"
-                            placeholder="Author"
+                            defaultValue={props.post ? props.post.author : ""}
                             required
                         />
                     </div>
@@ -54,7 +55,7 @@ const PostForm = props => {
                             id="title"
                             name="title"
                             className="form-control"
-                            placeholder="Title"
+                            defaultValue={props.post ? props.post.title : ""}
                             required
                         />
                     </div>
@@ -65,7 +66,7 @@ const PostForm = props => {
                             id="body"
                             name="body"
                             className="form-control"
-                            placeholder="Body"
+                            defaultValue={props.post ? props.post.body : ""}
                             required
                         />
                     </div>

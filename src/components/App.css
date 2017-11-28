@@ -344,9 +344,21 @@ label {
     text-align: center;
 }
 
+.btn-edit {
+    padding-right: 20px;
+}
+
+a {
+    cursor: pointer;
+}
+
 .comment {
     border-top: 1px solid #b9b9b9;
     margin-top: 16px;
+}
+
+.grey {
+    color: #828080 !important;
 }
 
 .comment-header {
