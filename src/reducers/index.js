@@ -9,7 +9,9 @@ import {
     ADD_POST,
     UPDATE_POST,
     DELETE_POST,
-    VOTE_POST
+    VOTE_POST,
+    ADD_COMMENT,
+    DELETE_COMMENT
 } from "../actions";
 
 /*const stateShape = {
@@ -186,6 +188,37 @@ function app(
                     [action.post.category]: postNewState(state, action)
                 }
             };
+        case DELETE_COMMENT:
+            let newCommentState;
+            if (
+                state.comments[action.comment.parentId].constructor === Array &&
+                state.comments[action.comment.parentId].length > 1
+            ) {
+                const commentIndex = state.comments[
+                    action.comment.parentId
+                ].findIndex(item => item.id === action.comment.id);
+
+                newCommentState = state.comments[
+                    action.comment.parentId
+                ].splice(commentIndex, 1);
+            } else {
+                newCommentState = state.comments[action.comment.parentId] = [];
+            }
+            return {
+                ...state,
+                comments: {
+                    ...state.comments,
+                    [action.comment.parentId]: newCommentState
+                }
+            };
+        case ADD_COMMENT:
+            return {
+                ...state,
+                comments: {
+                    ...state.comments,
+                    [action.comment.parentId]: commentNewState(state, action)
+                }
+            };
         default:
             return state;
     }
@@ -211,6 +244,35 @@ function postNewState(state, action) {
         }
     } else {
         return action.post;
+    }
+}
+
+function commentNewState(state, action) {
+    if (state.comments[action.comment.parentId] !== undefined) {
+        if (state.comments[action.comment.parentId].constructor === Array) {
+            const commentIndex = state.comments[
+                action.comment.parentId
+            ].findIndex(item => item.id === action.comment.id);
+
+            if (commentIndex >= 0) {
+                state.comments[action.comment.parentId].splice(commentIndex, 1);
+            }
+
+            return state.comments[action.comment.parentId].concat(
+                action.comment
+            );
+        } else {
+            if (
+                state.comments[action.comment.parentId].id === action.comment.id
+            ) {
+                return action.comment;
+            }
+            return [state.comments[action.comment.parentId]].concat(
+                action.comment
+            );
+        }
+    } else {
+        return action.comment;
     }
 }
 

@@ -77,7 +77,7 @@ class Post extends Component {
                     </div>
                 </div>
 
-                <Comments />
+                <Comments post={post} />
 
                 {this.state.showPostForm && (
                     <PostForm

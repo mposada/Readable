@@ -42,13 +42,10 @@ export function getPost(id) {
 }
 
 export function getComments(postID) {
-    console.log(`${api}/posts/${postID}/comments`);
     return fetch(`${api}/posts/${postID}/comments`, { headers })
         .then(response => response.json(), error => console.log("Error"))
         .then(jsonResponse => {
-            console.log("jsonResponse", jsonResponse);
             const comments = jsonResponse.reduce((comments, comment) => {
-                console.log(comments[comment.parentId]);
                 if (comments[comment.parentId]) {
                     return {
                         ...comments,
@@ -63,7 +60,7 @@ export function getComments(postID) {
                     };
                 }
             }, {});
-            console.log("comments", comments);
+
             return comments;
         });
 }
@@ -106,4 +103,23 @@ export function votePost(vote, post) {
     })
         .then(response => response.json())
         .catch(error => console.log("Error voting the post", error));
+}
+
+export function deleteComment(id) {
+    return fetch(`${api}/comments/${id}`, {
+        method: "DELETE",
+        headers
+    })
+        .then(response => response.json())
+        .catch(error => console.log("Error voting the post", error));
+}
+
+export function createComment(body) {
+    return fetch(`${api}/comments/`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(body)
+    })
+        .then(response => response.json())
+        .catch(error => console.log("An error occured.", error));
 }
