@@ -5,7 +5,8 @@ import {
     updatePost,
     deletePost,
     votePost,
-    deleteComment
+    deleteComment,
+    requestVoteComment
 } from "../utils/ReadableAPI";
 
 export const REQUEST_ALL_POSTS = "REQUEST_ALL_POSTS";
@@ -16,7 +17,9 @@ export const DELETE_POST = "DELETE_POST";
 export const VOTE_POST = "VOTE_POST";
 export const RECEIVE_COMMENTS = "RECEIVE_COMMENTS";
 export const ADD_COMMENT = "ADD_COMMENT";
+export const UPDATE_COMMENT = "UPDATE_COMMENT";
 export const DELETE_COMMENT = "DELETE_COMMENT";
+export const VOTE_COMMENT = "VOTE_COMMENT";
 
 export const FILTER_POSTS_BY_TITLE = "FILTER_POSTS_BY_TITLE";
 export const FILTER_POSTS_SCORE = "FILTER_POSTS_SCORE";
@@ -58,13 +61,6 @@ export function addPost(post) {
     };
 }
 
-export function addComment(comment) {
-    return {
-        type: ADD_COMMENT,
-        comment
-    };
-}
-
 function receivePosts(posts) {
     return {
         type: RECEIVE_ALL_POSTS,
@@ -101,9 +97,30 @@ function changePostVote(post) {
     };
 }
 
+export function addComment(comment) {
+    return {
+        type: ADD_COMMENT,
+        comment
+    };
+}
+
+export function updateComment(comment) {
+    return {
+        type: UPDATE_COMMENT,
+        comment
+    };
+}
+
 function removeComment(comment) {
     return {
         type: DELETE_COMMENT,
+        comment
+    };
+}
+
+function changeCommentVote(comment) {
+    return {
+        type: VOTE_COMMENT,
         comment
     };
 }
@@ -143,6 +160,7 @@ export function fetchPost(id) {
     //
 }
 
+// is better like this ? , or to make it like the create post action ?
 export function requestUpdatePost(id, post) {
     return dispatch => {
         updatePost(id, post).then(response =>
@@ -168,6 +186,14 @@ export function vote(vote, post) {
 export function requestDeleteComment(id) {
     return dispatch => {
         deleteComment(id).then(response => dispatch(removeComment(response)));
+    };
+}
+
+export function voteComment(vote, comment) {
+    return dispatch => {
+        requestVoteComment(vote, comment).then(response =>
+            dispatch(changeCommentVote(response))
+        );
     };
 }
 

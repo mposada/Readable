@@ -11,7 +11,9 @@ import {
     DELETE_POST,
     VOTE_POST,
     ADD_COMMENT,
-    DELETE_COMMENT
+    UPDATE_COMMENT,
+    DELETE_COMMENT,
+    VOTE_COMMENT
 } from "../actions";
 
 /*const stateShape = {
@@ -212,6 +214,22 @@ function app(
                 }
             };
         case ADD_COMMENT:
+            return {
+                ...state,
+                comments: {
+                    ...state.comments,
+                    [action.comment.parentId]: commentNewState(state, action)
+                }
+            };
+        case UPDATE_COMMENT:
+            return {
+                ...state,
+                comments: {
+                    ...state.comments,
+                    [action.comment.parentId]: commentNewState(state, action)
+                }
+            };
+        case VOTE_COMMENT:
             return {
                 ...state,
                 comments: {

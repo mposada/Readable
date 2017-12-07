@@ -16,7 +16,7 @@ const CommentForm = props => {
 
     return (
         <div className="add-comment">
-            <h2 className="modal-title">Add a Comment</h2>
+            <h2 className="modal-title">Comment Form</h2>
             <form onSubmit={handleSubmit} method="post">
                 <div className="form-group">
                     <label>Name or Nickname</label>
@@ -26,6 +26,8 @@ const CommentForm = props => {
                         name="author"
                         className="form-control"
                         ref={input => (this._author = input)}
+                        defaultValue={props.comment ? props.comment.author : ""}
+                        disabled={props.comment}
                         required
                     />
                 </div>
@@ -37,6 +39,7 @@ const CommentForm = props => {
                         name="body"
                         className="form-control"
                         ref={textarea => (this._body = textarea)}
+                        defaultValue={props.comment ? props.comment.body : ""}
                         required
                     />
                 </div>

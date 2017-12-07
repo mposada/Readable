@@ -123,3 +123,24 @@ export function createComment(body) {
         .then(response => response.json())
         .catch(error => console.log("An error occured.", error));
 }
+
+export function requestUpdateComment(comment, body) {
+    return fetch(`${api}/comments/${comment.id}`, {
+        method: "PUT",
+        headers,
+        body: JSON.stringify(body)
+    })
+        .then(response => response.json())
+        .catch(error => console.log("An error occured.", error));
+}
+
+export function requestVoteComment(vote, comment) {
+    const body = { option: vote };
+    return fetch(`${api}/comments/${comment.id}`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(body)
+    })
+        .then(response => response.json())
+        .catch(error => console.log("Error voting the post", error));
+}
