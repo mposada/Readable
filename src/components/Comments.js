@@ -103,6 +103,12 @@ class Comments extends Component {
         return (
             <div className="comments">
                 <CommentForm onSubmitComment={this._createComment.bind(this)} />
+                <div style={{ textAlign: "center", marginTop: "20px" }}>
+                    <i className="fa fa-comment" />{" "}
+                    {showingComments.length > 0
+                        ? showingComments.length
+                        : "There are no comments yet"}
+                </div>
                 {showingComments.map(comment => (
                     <Comment
                         key={comment.id}

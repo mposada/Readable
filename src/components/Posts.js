@@ -5,7 +5,14 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { fetchAllPosts, filterPostsBytitle, addPost } from "../actions";
+import {
+    fetchAllPosts,
+    filterPostsBytitle,
+    addPost,
+    vote,
+    requestUpdatePost,
+    requestDeletePost
+} from "../actions";
 import escapeRegExp from "escape-string-regexp";
 import uuidv4 from "uuid/v4";
 import Header from "./Header";
@@ -22,7 +29,8 @@ class Posts extends Component {
         super(props);
 
         this.state = {
-            modalFormActive: false
+            modalFormActive: false,
+            post: {}
         };
     }
 
@@ -31,9 +39,10 @@ class Posts extends Component {
         dispatch(fetchAllPosts());
     }
 
-    toggleModalForm() {
+    toggleModalForm(post) {
         this.setState({
-            modalFormActive: !this.state.modalFormActive
+            modalFormActive: !this.state.modalFormActive,
+            post
         });
     }
 
@@ -42,20 +51,39 @@ class Posts extends Component {
         dispatch(filterPostsBytitle(filter));
     }
 
-    createPost(data) {
-        const body = {
-            id: uuidv4(),
-            timestamp: Date.now(),
-            ...data
-        };
-
-        // go on...
-        createPost(body).then(response => {
-            this.props.dispatch(addPost(response));
+    submitForm(data) {
+        if (this.state.post) {
+            const { dispatch } = this.props;
+            const { post: { id } } = this.state;
+            dispatch(requestUpdatePost(id, data));
             this.setState({
                 modalFormActive: false
             });
-        });
+        } else {
+            const body = {
+                id: uuidv4(),
+                timestamp: Date.now(),
+                ...data
+            };
+
+            // go on...
+            createPost(body).then(response => {
+                this.props.dispatch(addPost(response));
+                this.setState({
+                    modalFormActive: false
+                });
+            });
+        }
+    }
+
+    deletePost(post) {
+        const { dispatch } = this.props;
+        dispatch(requestDeletePost(post.id));
+    }
+
+    votePost(value, post) {
+        const { dispatch } = this.props;
+        dispatch(vote(value, post));
     }
 
     render() {
@@ -68,7 +96,8 @@ class Posts extends Component {
             titleFilter,
             voteScoreFilter,
             dateFilter,
-            selectedCategory
+            selectedCategory,
+            comments
         } = this.props;
 
         // check what posts should we show
@@ -118,16 +147,37 @@ class Posts extends Component {
                     />
                     <section className="posts-container">
                         {(isFetching && <Loading />) ||
-                            showingPosts.map(post => (
-                                <ListItemPost key={post.id} post={post} />
-                            ))}
+                            showingPosts.map(
+                                post =>
+                                    Object.keys(post).length > 0 && (
+                                        <ListItemPost
+                                            key={post.id}
+                                            post={post}
+                                            comments={
+                                                comments
+                                                    ? comments[post.id]
+                                                    : ""
+                                            }
+                                            onVotePost={this.votePost.bind(
+                                                this
+                                            )}
+                                            onToggleModalForm={this.toggleModalForm.bind(
+                                                this
+                                            )}
+                                            onDeletePost={this.deletePost.bind(
+                                                this
+                                            )}
+                                        />
+                                    )
+                            )}
                     </section>
                 </section>
 
                 {this.state.modalFormActive && (
                     <PostForm
+                        post={this.state.post}
                         onToggleModalForm={this.toggleModalForm.bind(this)}
-                        onSubmitPost={this.createPost.bind(this)}
+                        onSubmitPost={this.submitForm.bind(this)}
                     />
                 )}
 
@@ -147,7 +197,7 @@ Posts.PropTypes = {
 };
 
 function mapStateToProps(state, ownProps) {
-    const { posts: postsByCategory, isFetching } = state.app;
+    const { posts: postsByCategory, comments, isFetching } = state.app;
     const {
         filteredPosts: {
             filter: titleFilter,
@@ -186,7 +236,8 @@ function mapStateToProps(state, ownProps) {
         titleFilter,
         voteScoreFilter,
         dateFilter,
-        selectedCategory
+        selectedCategory,
+        comments
     };
 }
 

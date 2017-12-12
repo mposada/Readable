@@ -191,21 +191,25 @@ function app(
                 }
             };
         case DELETE_COMMENT:
-            let newCommentState;
-            if (
-                state.comments[action.comment.parentId].constructor === Array &&
-                state.comments[action.comment.parentId].length > 1
-            ) {
-                const commentIndex = state.comments[
-                    action.comment.parentId
-                ].findIndex(item => item.id === action.comment.id);
+            console.log("action comment", action.comment);
+            console.log("comments", state.comments);
+            console.log(
+                "comment for parent",
+                state.comments[action.comment.parentId]
+            );
 
-                newCommentState = state.comments[
-                    action.comment.parentId
-                ].splice(commentIndex, 1);
-            } else {
-                newCommentState = state.comments[action.comment.parentId] = [];
-            }
+            const commentIndex = state.comments[
+                action.comment.parentId
+            ].findIndex(comment => comment.id === action.comment.id);
+
+            console.log("commentIndex", commentIndex);
+
+            const newCommentState = state.comments[
+                action.comment.parentId
+            ].splice(commentIndex, 1);
+
+            console.log("new Comment State", newCommentState);
+
             return {
                 ...state,
                 comments: {

@@ -16,7 +16,7 @@ class Post extends Component {
     }
 
     updatePost(data) {
-        const { id, dispatch } = this.props;
+        const { post: { id }, dispatch } = this.props;
         dispatch(requestUpdatePost(id, data));
         this.setState({
             showPostForm: false
@@ -24,7 +24,7 @@ class Post extends Component {
     }
 
     deletePost() {
-        const { dispatch, id } = this.props;
+        const { dispatch, post: { id } } = this.props;
         dispatch(requestDeletePost(id));
         window.location.href = "http://localhost:3000/";
     }
@@ -56,7 +56,7 @@ class Post extends Component {
                             <i className="fa fa-pencil" /> Edit
                         </a>
 
-                        <a onClick={this.onDeletePost}>
+                        <a onClick={this.deletePost.bind(this)}>
                             <i className="fa fa-trash" /> Delete
                         </a>
                     </div>

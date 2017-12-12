@@ -11,13 +11,10 @@ class App extends Component {
                 <Router>
                     <div>
                         <Route exact={true} path="/" component={Posts} />
-                        <Route path="/react" component={Posts} />
-                        <Route path="/redux" component={Posts} />
-                        <Route path="/udacity" component={Posts} />
-                        <Route
-                            path="/post/:category/:id"
-                            component={PostDetail}
-                        />
+                        <Route exact={true} path="/react" component={Posts} />
+                        <Route exact={true} path="/redux" component={Posts} />
+                        <Route exact={true} path="/udacity" component={Posts} />
+                        <Route path="/:category/:id" component={PostDetail} />
                     </div>
                 </Router>
             </div>
