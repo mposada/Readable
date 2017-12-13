@@ -191,30 +191,13 @@ function app(
                 }
             };
         case DELETE_COMMENT:
-            console.log("action comment", action.comment);
-            console.log("comments", state.comments);
-            console.log(
-                "comment for parent",
-                state.comments[action.comment.parentId]
-            );
-
-            const commentIndex = state.comments[
-                action.comment.parentId
-            ].findIndex(comment => comment.id === action.comment.id);
-
-            console.log("commentIndex", commentIndex);
-
-            const newCommentState = state.comments[
-                action.comment.parentId
-            ].splice(commentIndex, 1);
-
-            console.log("new Comment State", newCommentState);
-
             return {
                 ...state,
                 comments: {
                     ...state.comments,
-                    [action.comment.parentId]: newCommentState
+                    [action.comment.parentId]: state.comments[
+                        action.comment.parentId
+                    ].filter(comment => comment.id != action.comment.id)
                 }
             };
         case ADD_COMMENT:
