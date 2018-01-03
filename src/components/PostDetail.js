@@ -9,6 +9,7 @@ import { fetchPost } from "../actions";
 import Navigation from "./Navigation";
 import Header from "./Header";
 import Post from "./Post";
+import NotFound from "./NotFound";
 
 import Loading from "./Loading";
 
@@ -22,16 +23,21 @@ class PostDetail extends Component {
 
     render() {
         const { post, isFetching } = this.props;
+        const postExists = Object.keys(post).length > 0 ? true : false;
         return (
-            <section className="app">
-                <Navigation selectedCategory={post.category} />
-                <section className="content">
-                    <Header selectedCategory="Post Detail" />
-                    <section className="posts-container">
-                        {(isFetching && <Loading />) || <Post post={post} />}
+            (postExists && (
+                <section className="app">
+                    <Navigation selectedCategory={post.category} />
+                    <section className="content">
+                        <Header selectedCategory="Post Detail" />
+                        <section className="posts-container">
+                            {(isFetching && <Loading />) || (
+                                <Post post={post} />
+                            )}
+                        </section>
                     </section>
                 </section>
-            </section>
+            )) || <NotFound />
         );
     }
 }
